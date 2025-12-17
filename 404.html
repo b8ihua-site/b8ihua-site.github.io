@@ -129,14 +129,13 @@ a.target:hover {
   position: fixed;
   top: calc(100vh - 80px); /* ボールの下あたりに */
   left: 50%;
-  transform: translateX(-50%);
+  margin-left: -50px; /* 幅に応じて調整 */
   font-size: 14px;
   color: #555;
   font-family: sans-serif;
-  opacity: 0.5;
+  opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
-  z-index:100;
 }
 #hint.show {
   opacity: 1;
@@ -327,7 +326,11 @@ function update() {
   ball.style.left = x + "px";
   ball.style.top = y + "px";
 
-  
+  if (!dragging && Math.abs(vx) < 0.5 && Math.abs(vy) < 0.5) {
+hint.classList.add("show");
+} else {
+ hint.classList.remove("show");
+}
 
   checkCollision();
   requestAnimationFrame(update);
