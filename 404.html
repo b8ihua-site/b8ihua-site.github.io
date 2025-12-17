@@ -326,12 +326,7 @@ function update() {
   ball.style.left = x + "px";
   ball.style.top = y + "px";
 
-  // ボールがほぼ停止していたらヒント表示
-  if (!dragging && Math.abs(vx) < 0.5 && Math.abs(vy) < 0.5) {
-    hint.classList.add("show");
-  } else {
-    hint.classList.remove("show");
-  }
+  
 
   checkCollision();
   requestAnimationFrame(update);
