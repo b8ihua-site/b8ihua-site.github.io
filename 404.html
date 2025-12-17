@@ -200,20 +200,22 @@ ball.style.top = y + "px";
 
 /* ========= 入力処理 ========= */
 
-ball.addEventListener("pointerdown", e => {
+function startDrag(e) {
   dragging = true;
-  startX = e.clientX;
-  startY = e.clientY;
+  startX = e.clientX ?? e.touches[0].clientX;
+  startY = e.clientY ?? e.touches[0].clientY;
   vx = vy = 0;
   arrow.style.display = "block";
-  ball.setPointerCapture(e.pointerId);
-});
+  if (e.pointerId) ball.setPointerCapture(e.pointerId);
+}
 
-window.addEventListener("pointermove", e => {
+function onDrag(e) {
   if (!dragging) return;
+  const clientX = e.clientX ?? e.touches[0].clientX;
+  const clientY = e.clientY ?? e.touches[0].clientY;
 
-  const dx = startX - e.clientX;
-  const dy = startY - e.clientY;
+  const dx = startX - clientX;
+  const dy = startY - clientY;
   const length = Math.hypot(dx, dy);
   const angle = Math.atan2(dy, dx);
 
@@ -221,18 +223,33 @@ window.addEventListener("pointermove", e => {
   arrow.style.left = x + 15 + "px";
   arrow.style.top = y + 15 + "px";
   arrow.style.transform = `rotate(${angle}rad)`;
-});
+}
 
-window.addEventListener("pointerup", e => {
+function endDrag(e) {
   if (!dragging) return;
   dragging = false;
   arrow.style.display = "none";
 
-  const POWER = 0.25;
-  vx = (startX - e.clientX) * POWER;
-  vy = (startY - e.clientY) * POWER;
-});
+  const clientX = e.clientX ?? e.changedTouches?.[0].clientX;
+  const clientY = e.clientY ?? e.changedTouches?.[0].clientY;
 
+  const POWER = 0.25;
+  vx = (startX - clientX) * POWER;
+  vy = (startY - clientY) * POWER;
+}
+
+// イベント登録
+ball.addEventListener("pointerdown", startDrag);
+ball.addEventListener("mousedown", startDrag);
+ball.addEventListener("touchstart", startDrag);
+
+window.addEventListener("pointermove", onDrag);
+window.addEventListener("mousemove", onDrag);
+window.addEventListener("touchmove", onDrag);
+
+window.addEventListener("pointerup", endDrag);
+window.addEventListener("mouseup", endDrag);
+window.addEventListener("touchend", endDrag);
 /* ========= 衝突判定 ========= */
 
 function checkCollision() {
